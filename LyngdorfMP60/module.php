@@ -23,13 +23,13 @@ class LyngdorfMP60 extends IPSModuleStrict
         $this->RegisterVariableBoolean('Mute', 'Mute', '~Switch', 3);
         $this->EnableAction('Mute');
 
-        $this->RegisterVariableInteger('Source', 'Quelle', '', 4);
+        $this->RegisterVariableInteger('Source', 'Quelle', 'LYNG.Source', 4);
         $this->EnableAction('Source');
 
-        $this->RegisterVariableInteger('AudioMode', 'Audio Mode', '', 5);
+        $this->RegisterVariableInteger('AudioMode', 'Audio Mode', 'LYNG.AudioMode', 5);
         $this->EnableAction('AudioMode');
 
-        $this->RegisterVariableInteger('Voicing', 'Voicing', '', 6);
+        $this->RegisterVariableInteger('Voicing', 'Voicing', 'LYNG.Voicing', 6);
         $this->EnableAction('Voicing');
 
         $this->RegisterVariableString('AudioTypeIn', 'Audio Type In', '', 7);
@@ -51,11 +51,6 @@ class LyngdorfMP60 extends IPSModuleStrict
                 'MAX'          => 24.0,
                 'STEP'         => 0.5
             ]);
-            
-            // Initialization for enumerations if not set yet
-            $this->InitializeEnumeration('Source', 'TV');
-            $this->InitializeEnumeration('AudioMode', 'Sound');
-            $this->InitializeEnumeration('Voicing', 'Speaker');
         }
 
         if ($this->HasActiveParent()) {
@@ -181,7 +176,7 @@ class LyngdorfMP60 extends IPSModuleStrict
         elseif (preg_match('/^SRC\((\d+)\)"(.*)"$/', $command, $matches)) {
             $index = intval($matches[1]);
             $name = $matches[2];
-            $this->UpdateEnumerationOption('Source', $index, $name);
+            IPS_SetVariableProfileAssociation('LYNG.Source', $index, $name, '', -1);
             $this->SetValue('Source', $index);
         }
         elseif (preg_match('/^SRC\((\d+)\)$/', $command, $matches)) {
@@ -190,7 +185,7 @@ class LyngdorfMP60 extends IPSModuleStrict
         elseif (preg_match('/^AUDMODE\((\d+)\)"(.*)"$/', $command, $matches)) {
             $index = intval($matches[1]);
             $name = $matches[2];
-            $this->UpdateEnumerationOption('AudioMode', $index, $name);
+            IPS_SetVariableProfileAssociation('LYNG.AudioMode', $index, $name, '', -1);
             $this->SetValue('AudioMode', $index);
         }
         elseif (preg_match('/^AUDMODE\((\d+)\)$/', $command, $matches)) {
@@ -199,7 +194,7 @@ class LyngdorfMP60 extends IPSModuleStrict
         elseif (preg_match('/^RPVOI\((\d+)\)"(.*)"$/', $command, $matches)) {
             $index = intval($matches[1]);
             $name = $matches[2];
-            $this->UpdateEnumerationOption('Voicing', $index, $name);
+            IPS_SetVariableProfileAssociation('LYNG.Voicing', $index, $name, '', -1);
             $this->SetValue('Voicing', $index);
         }
         elseif (preg_match('/^RPVOI\((\d+)\)$/', $command, $matches)) {
@@ -257,49 +252,5 @@ class LyngdorfMP60 extends IPSModuleStrict
         }
     }
 
-    private function InitializeEnumeration(string $ident, string $icon): void
-    {
-        $id = $this->GetIDForIdent($ident);
-        $pres = IPS_GetVariableCustomPresentation($id);
-        if (!is_array($pres) || empty($pres) || !isset($pres['PRESENTATION'])) {
-            IPS_SetVariableCustomPresentation($id, [
-                'PRESENTATION' => VARIABLE_PRESENTATION_ENUMERATION,
-                'ICON'         => $icon,
-                'Options'      => []
-            ]);
-        }
-    }
 
-    private function UpdateEnumerationOption(string $ident, int $value, string $label): void
-    {
-        if (!function_exists('IPS_GetVariableCustomPresentation')) return;
-        $id = $this->GetIDForIdent($ident);
-        $pres = IPS_GetVariableCustomPresentation($id);
-        if (!is_array($pres)) {
-            $pres = ['PRESENTATION' => VARIABLE_PRESENTATION_ENUMERATION, 'Options' => []];
-        }
-        if (!isset($pres['Options']) || !is_array($pres['Options'])) {
-            $pres['Options'] = [];
-        }
-
-        $found = false;
-        foreach ($pres['Options'] as &$option) {
-            if (isset($option['Value']) && $option['Value'] === $value) {
-                $option['Label'] = $label;
-                $found = true;
-                break;
-            }
-        }
-        if (!$found) {
-            $pres['Options'][] = [
-                'Value' => $value,
-                'Label' => $label
-            ];
-            // Options sortieren (optional, nach Value)
-            usort($pres['Options'], function($a, $b) {
-                return $a['Value'] <=> $b['Value'];
-            });
-        }
-        IPS_SetVariableCustomPresentation($id, $pres);
-    }
 }
