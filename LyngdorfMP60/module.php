@@ -56,9 +56,6 @@ class LyngdorfMP60 extends IPSModule
 
         $this->RegisterVariableString('AudioTypeIn', 'Audio Type In', '', 7);
         $this->RegisterVariableString('AudioTypeOut', 'Audio Type Out', '', 8);
-
-        $this->RegisterVariableString('Album', 'Album', '', 9);
-        $this->RegisterVariableString('Title', 'Titel', '', 10);
     }
 
     public function ApplyChanges()
@@ -242,8 +239,6 @@ class LyngdorfMP60 extends IPSModule
             $this->SetHidden('Voicing', false);
             $this->SetHidden('AudioTypeIn', false);
             $this->SetHidden('AudioTypeOut', false);
-            $this->SetHidden('Album', false);
-            $this->SetHidden('Title', false);
             return;
         }
 
@@ -255,8 +250,6 @@ class LyngdorfMP60 extends IPSModule
         $this->SetHidden('Voicing', $hidden);
         $this->SetHidden('AudioTypeIn', $hidden);
         $this->SetHidden('AudioTypeOut', $hidden);
-        $this->SetHidden('Album', $hidden);
-        $this->SetHidden('Title', $hidden);
     }
 
     private function SetHidden($ident, $hidden)
