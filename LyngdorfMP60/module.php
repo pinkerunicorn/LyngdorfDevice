@@ -23,13 +23,13 @@ class LyngdorfMP60 extends IPSModuleStrict
         $this->RegisterVariableBoolean('Mute', 'Mute', '~Switch', 3);
         $this->EnableAction('Mute');
 
-        $this->RegisterVariableInteger('Source', 'Quelle', 'LYNG.Source', 4);
+        $this->RegisterVariableInteger('Source', 'Quelle', '#LYNG.Source', 4);
         $this->EnableAction('Source');
 
-        $this->RegisterVariableInteger('AudioMode', 'Audio Mode', 'LYNG.AudioMode', 5);
+        $this->RegisterVariableInteger('AudioMode', 'Audio Mode', '#LYNG.AudioMode', 5);
         $this->EnableAction('AudioMode');
 
-        $this->RegisterVariableInteger('Voicing', 'Voicing', 'LYNG.Voicing', 6);
+        $this->RegisterVariableInteger('Voicing', 'Voicing', '#LYNG.Voicing', 6);
         $this->EnableAction('Voicing');
 
         $this->RegisterVariableString('AudioTypeIn', 'Audio Type In', '', 7);
@@ -176,7 +176,7 @@ class LyngdorfMP60 extends IPSModuleStrict
         elseif (preg_match('/^SRC\((\d+)\)"(.*)"$/', $command, $matches)) {
             $index = intval($matches[1]);
             $name = $matches[2];
-            IPS_SetVariableProfileAssociation('LYNG.Source', $index, $name, '', -1);
+            IPS_SetVariableProfileAssociation('#LYNG.Source', $index, $name, '', -1);
             $this->SetValue('Source', $index);
         }
         elseif (preg_match('/^SRC\((\d+)\)$/', $command, $matches)) {
@@ -185,7 +185,7 @@ class LyngdorfMP60 extends IPSModuleStrict
         elseif (preg_match('/^AUDMODE\((\d+)\)"(.*)"$/', $command, $matches)) {
             $index = intval($matches[1]);
             $name = $matches[2];
-            IPS_SetVariableProfileAssociation('LYNG.AudioMode', $index, $name, '', -1);
+            IPS_SetVariableProfileAssociation('#LYNG.AudioMode', $index, $name, '', -1);
             $this->SetValue('AudioMode', $index);
         }
         elseif (preg_match('/^AUDMODE\((\d+)\)$/', $command, $matches)) {
@@ -194,7 +194,7 @@ class LyngdorfMP60 extends IPSModuleStrict
         elseif (preg_match('/^RPVOI\((\d+)\)"(.*)"$/', $command, $matches)) {
             $index = intval($matches[1]);
             $name = $matches[2];
-            IPS_SetVariableProfileAssociation('LYNG.Voicing', $index, $name, '', -1);
+            IPS_SetVariableProfileAssociation('#LYNG.Voicing', $index, $name, '', -1);
             $this->SetValue('Voicing', $index);
         }
         elseif (preg_match('/^RPVOI\((\d+)\)$/', $command, $matches)) {

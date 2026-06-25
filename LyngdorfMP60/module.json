@@ -15,17 +15,17 @@
     "prefix": "LYNG",
     "profiles": [
         {
-            "name": "LYNG.Source",
+            "name": "Source",
             "type": 1,
             "icon": "TV"
         },
         {
-            "name": "LYNG.AudioMode",
+            "name": "AudioMode",
             "type": 1,
             "icon": "Sound"
         },
         {
-            "name": "LYNG.Voicing",
+            "name": "Voicing",
             "type": 1,
             "icon": "Speaker"
         }
