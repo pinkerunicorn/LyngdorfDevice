@@ -11,30 +11,6 @@ class LyngdorfMP60 extends IPSModule
         // Receive Buffer für unvollständige TCP Pakete
         $this->SetBuffer('ReceiveBuffer', '');
 
-        // Profile anlegen
-        if (!IPS_VariableProfileExists('LYNGDORF.Volume')) {
-            IPS_CreateVariableProfile('LYNGDORF.Volume', 2); // Float
-            IPS_SetVariableProfileIcon('LYNGDORF.Volume', 'Intensity');
-            IPS_SetVariableProfileText('LYNGDORF.Volume', '', ' dB');
-            IPS_SetVariableProfileValues('LYNGDORF.Volume', -99.9, 24.0, 0.5);
-            IPS_SetVariableProfileDigits('LYNGDORF.Volume', 1);
-        }
-
-        if (!IPS_VariableProfileExists('LYNGDORF.Source')) {
-            IPS_CreateVariableProfile('LYNGDORF.Source', 1); // Integer
-            IPS_SetVariableProfileIcon('LYNGDORF.Source', 'TV');
-        }
-
-        if (!IPS_VariableProfileExists('LYNGDORF.AudioMode')) {
-            IPS_CreateVariableProfile('LYNGDORF.AudioMode', 1); // Integer
-            IPS_SetVariableProfileIcon('LYNGDORF.AudioMode', 'Sound');
-        }
-
-        if (!IPS_VariableProfileExists('LYNGDORF.Voicing')) {
-            IPS_CreateVariableProfile('LYNGDORF.Voicing', 1); // Integer
-            IPS_SetVariableProfileIcon('LYNGDORF.Voicing', 'Speaker');
-        }
-
         // Variablen registrieren
         $this->RegisterVariableBoolean('Power', 'Power', '~Switch', 1);
         $this->EnableAction('Power');

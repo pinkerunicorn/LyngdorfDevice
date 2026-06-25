@@ -11,5 +11,32 @@
     "implemented": [
         "{018EF6B5-AB94-40C6-AA53-46943E824ACF}"
     ],
-    "prefix": "LYNG"
+    "prefix": "LYNG",
+    "profiles": [
+        {
+            "name": "LYNGDORF.Volume",
+            "type": 2,
+            "icon": "Intensity",
+            "suffix": " dB",
+            "minValue": -99.9,
+            "maxValue": 24.0,
+            "stepSize": 0.5,
+            "digits": 1
+        },
+        {
+            "name": "LYNGDORF.Source",
+            "type": 1,
+            "icon": "TV"
+        },
+        {
+            "name": "LYNGDORF.AudioMode",
+            "type": 1,
+            "icon": "Sound"
+        },
+        {
+            "name": "LYNGDORF.Voicing",
+            "type": 1,
+            "icon": "Speaker"
+        }
+    ]
 }
