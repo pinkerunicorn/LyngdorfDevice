@@ -1,15 +1,13 @@
 {
     "id": "{0D99B270-08C6-41E5-ADEF-38226D278102}",
-    "name": "Lyngdorf MP-60",
+    "name": "LyngdorfMP60",
     "type": 3,
     "vendor": "Lyngdorf",
-    "aliases": [
-        "Lyngdorf MP-60"
-    ],
+    "aliases": [],
     "parentRequirements": [
         "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}"
     ],
     "childRequirements": [],
     "implemented": [],
-    "prefix": "LYNGDORF"
+    "prefix": "LYNG"
 }
