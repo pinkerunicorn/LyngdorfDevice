@@ -3,6 +3,7 @@
     "name": "LyngdorfMP60",
     "type": 3,
     "vendor": "Lyngdorf",
+    "url": "https://github.com/pinkerunicorn/LyngdorfDevice",
     "aliases": [],
     "parentRequirements": [
         "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}"
