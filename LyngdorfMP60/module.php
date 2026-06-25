@@ -116,7 +116,7 @@ class LyngdorfMP60 extends IPSModuleStrict
     {
         $data = json_decode($JSONString);
         if (isset($data->Buffer)) {
-            $payload = is_string($data->Buffer) ? $data->Buffer : '';
+            $payload = is_string($data->Buffer) ? hex2bin($data->Buffer) : '';
         } else {
             return "";
         }
@@ -222,7 +222,7 @@ class LyngdorfMP60 extends IPSModuleStrict
         
         $this->SendDataToParent(json_encode([
             'DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}',
-            'Buffer' => $command . "\r"
+            'Buffer' => bin2hex($command . "\r")
         ]));
     }
 
