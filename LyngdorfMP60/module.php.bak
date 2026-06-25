@@ -1,10 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
-class LyngdorfMP60 extends IPSModuleStrict
+class LyngdorfMP60 extends IPSModule
 {
-    public function Create(): void
+    public function Create()
     {
         parent::Create();
 
@@ -13,76 +11,81 @@ class LyngdorfMP60 extends IPSModuleStrict
         // Receive Buffer für unvollständige TCP Pakete
         $this->SetBuffer('ReceiveBuffer', '');
 
+        // Profile anlegen
+        if (!IPS_VariableProfileExists('LYNGDORF.Volume')) {
+            IPS_CreateVariableProfile('LYNGDORF.Volume', 2); // Float
+            IPS_SetVariableProfileIcon('LYNGDORF.Volume', 'Intensity');
+            IPS_SetVariableProfileText('LYNGDORF.Volume', '', ' dB');
+            IPS_SetVariableProfileValues('LYNGDORF.Volume', -99.9, 24.0, 0.5);
+        }
+
+        if (!IPS_VariableProfileExists('LYNGDORF.Source')) {
+            IPS_CreateVariableProfile('LYNGDORF.Source', 1); // Integer
+            IPS_SetVariableProfileIcon('LYNGDORF.Source', 'TV');
+        }
+
+        if (!IPS_VariableProfileExists('LYNGDORF.AudioMode')) {
+            IPS_CreateVariableProfile('LYNGDORF.AudioMode', 1); // Integer
+            IPS_SetVariableProfileIcon('LYNGDORF.AudioMode', 'Sound');
+        }
+
+        if (!IPS_VariableProfileExists('LYNGDORF.Voicing')) {
+            IPS_CreateVariableProfile('LYNGDORF.Voicing', 1); // Integer
+            IPS_SetVariableProfileIcon('LYNGDORF.Voicing', 'Speaker');
+        }
+
         // Variablen registrieren
-        $this->RegisterVariableBoolean('Power', 'Power', '', 1);
+        $this->RegisterVariableBoolean('Power', 'Power', '~Switch', 1);
         $this->EnableAction('Power');
 
-        $this->RegisterVariableFloat('Volume', 'Lautstärke', '', 2);
+        $this->RegisterVariableFloat('Volume', 'Lautstärke', 'LYNGDORF.Volume', 2);
         $this->EnableAction('Volume');
 
-        $this->RegisterVariableBoolean('Mute', 'Mute', '', 3);
+        $this->RegisterVariableBoolean('Mute', 'Mute', '~Switch', 3);
         $this->EnableAction('Mute');
 
-        $this->RegisterVariableInteger('Source', 'Quelle', '', 4);
+        $this->RegisterVariableInteger('Source', 'Quelle', 'LYNGDORF.Source', 4);
         $this->EnableAction('Source');
 
-        $this->RegisterVariableInteger('AudioMode', 'Audio Mode', '', 5);
+        $this->RegisterVariableInteger('AudioMode', 'Audio Mode', 'LYNGDORF.AudioMode', 5);
         $this->EnableAction('AudioMode');
 
-        $this->RegisterVariableInteger('Voicing', 'Voicing', '', 6);
+        $this->RegisterVariableInteger('Voicing', 'Voicing', 'LYNGDORF.Voicing', 6);
         $this->EnableAction('Voicing');
 
         $this->RegisterVariableString('AudioTypeIn', 'Audio Type In', '', 7);
         $this->RegisterVariableString('AudioTypeOut', 'Audio Type Out', '', 8);
     }
 
-    public function ApplyChanges(): void
+    public function ApplyChanges()
     {
         parent::ApplyChanges();
 
-        if (function_exists('IPS_SetVariableCustomPresentation')) {
-            IPS_SetVariableCustomPresentation($this->GetIDForIdent('Power'), [
-                'PRESENTATION'   => VARIABLE_PRESENTATION_SWITCH,
-                'ICON'           => 'Power'
-            ]);
-
-            IPS_SetVariableCustomPresentation($this->GetIDForIdent('Mute'), [
-                'PRESENTATION'   => VARIABLE_PRESENTATION_SWITCH,
-                'ICON'           => 'Speaker'
-            ]);
-
-            IPS_SetVariableCustomPresentation($this->GetIDForIdent('Volume'), [
-                'PRESENTATION' => VARIABLE_PRESENTATION_SLIDER,
-                'ICON'         => 'Intensity',
-                'SUFFIX'       => ' dB',
-                'MIN'          => -99.9,
-                'MAX'          => 24.0,
-                'STEP'         => 0.5
-            ]);
-            
-            // Initialization for enumerations if not set yet
-            $this->InitializeEnumeration('Source', 'TV');
-            $this->InitializeEnumeration('AudioMode', 'Sound');
-            $this->InitializeEnumeration('Voicing', 'Speaker');
-        }
-
+        // Wenn mit einem ClientSocket verbunden, initialisiere Abfragen
         if ($this->HasActiveParent()) {
+            // Setze Feedback Level auf 1 (Live Updates!)
             $this->SendCommand('!VERB(1)');
+
+            // Initialen Status abfragen
             $this->SendCommand('!POWER?');
             $this->SendCommand('!VOL?');
             $this->SendCommand('!MUTE?');
+            
+            // Listen laden
             $this->SendCommand('!SRCS?');
             $this->SendCommand('!AUDMODEL?');
             $this->SendCommand('!RPVOIS?');
+
+            // Aktuelle Zustände laden
             $this->SendCommand('!SRC?');
             $this->SendCommand('!AUDMODE?');
             $this->SendCommand('!RPVOI?');
             $this->SendCommand('!AUDTYPE?');
-            $this->SendCommand('!AUDTYPEOUT?');
+            $this->SendCommand('!AUDTYPEOUT?'); // Wird laut Doku vielleicht nicht von allen unterstützt, aber wir versuchen es
         }
     }
 
-    public function RequestAction(string $Ident, $Value): void
+    public function RequestAction($Ident, $Value)
     {
         switch ($Ident) {
             case 'Power':
@@ -94,6 +97,7 @@ class LyngdorfMP60 extends IPSModuleStrict
                 break;
 
             case 'Volume':
+                // Float wert z.B. -25.5 in Integer -255 umwandeln
                 $volInt = (int)round($Value * 10);
                 $this->SendCommand('!VOL(' . $volInt . ')');
                 break;
@@ -120,19 +124,19 @@ class LyngdorfMP60 extends IPSModuleStrict
         }
     }
 
-    public function ReceiveData(string $JSONString): string
+    public function ReceiveData($JSONString)
     {
         $data = json_decode($JSONString);
-        if (isset($data->Buffer)) {
-            $payload = is_string($data->Buffer) ? $data->Buffer : '';
-        } else {
-            return "";
-        }
+        $payload = utf8_decode($data->Buffer);
         
         $buffer = $this->GetBuffer('ReceiveBuffer');
         $buffer .= $payload;
 
+        // Die Lyngdorf API trennt Kommandos mit Carriage Return (\r oder 0x0D)
         $packets = explode("\r", $buffer);
+
+        // Das letzte Element ist entweder leer (wenn der String mit \r endete)
+        // oder ein unvollständiges Paket. Wir packen es zurück in den Buffer.
         $this->SetBuffer('ReceiveBuffer', array_pop($packets));
 
         foreach ($packets as $packet) {
@@ -141,37 +145,20 @@ class LyngdorfMP60 extends IPSModuleStrict
                 $this->ProcessPacket($packet);
             }
         }
-        return "";
     }
 
-    public function UpdateData(): void
+    private function ProcessPacket($packet)
     {
-        if ($this->HasActiveParent()) {
-            $this->SendCommand('!VERB(1)');
-            $this->SendCommand('!POWER?');
-            $this->SendCommand('!VOL?');
-            $this->SendCommand('!MUTE?');
-            $this->SendCommand('!SRCS?');
-            $this->SendCommand('!AUDMODEL?');
-            $this->SendCommand('!RPVOIS?');
-            $this->SendCommand('!SRC?');
-            $this->SendCommand('!AUDMODE?');
-            $this->SendCommand('!RPVOI?');
-            $this->SendCommand('!AUDTYPE?');
-            $this->SendCommand('!AUDTYPEOUT?');
-        }
-    }
-
-    private function ProcessPacket(string $packet): void
-    {
+        // Ein gültiges Status-Paket beginnt mit '!' oder '#'
         if (strpos($packet, '!') !== 0 && strpos($packet, '#') !== 0) {
             return;
         }
 
-        $command = substr($packet, 1);
+        $command = substr($packet, 1); // Ausrufezeichen entfernen
 
         $this->SendDebug('Receive', $command, 0);
 
+        // Pattern matching
         if (preg_match('/^POWER\((\d)\)$/', $command, $matches)) {
             $power = ($matches[1] == '1');
             $this->SetValue('Power', $power);
@@ -186,57 +173,66 @@ class LyngdorfMP60 extends IPSModuleStrict
         elseif ($command === 'MUTEOFF') {
             $this->SetValue('Mute', false);
         }
+        // SRC(X)"Name" (Beispiel: !SRC(1)"Blu-ray player")
         elseif (preg_match('/^SRC\((\d+)\)"(.*)"$/', $command, $matches)) {
             $index = intval($matches[1]);
             $name = $matches[2];
-            $this->UpdateEnumerationOption('Source', $index, $name);
+            IPS_SetVariableProfileAssociation('LYNGDORF.Source', $index, $name, '', -1);
+            // Manchmal wird dies auch gesendet, wenn die Quelle umschaltet.
+            // Aber eigentlich sendet !SRC? ein !SRC(X)"NAME", weshalb wir hier auch den Status updaten sollten,
+            // wenn es nicht aus dem !SRCS? Listen-Kommando kommt.
+            // Die sicherste Variante: den Wert auch hier setzen.
             $this->SetValue('Source', $index);
         }
         elseif (preg_match('/^SRC\((\d+)\)$/', $command, $matches)) {
             $this->SetValue('Source', intval($matches[1]));
         }
+        // AUDMODE(X)"Name"
         elseif (preg_match('/^AUDMODE\((\d+)\)"(.*)"$/', $command, $matches)) {
             $index = intval($matches[1]);
             $name = $matches[2];
-            $this->UpdateEnumerationOption('AudioMode', $index, $name);
+            IPS_SetVariableProfileAssociation('LYNGDORF.AudioMode', $index, $name, '', -1);
             $this->SetValue('AudioMode', $index);
         }
         elseif (preg_match('/^AUDMODE\((\d+)\)$/', $command, $matches)) {
             $this->SetValue('AudioMode', intval($matches[1]));
         }
+        // RPVOI(X)"Name"
         elseif (preg_match('/^RPVOI\((\d+)\)"(.*)"$/', $command, $matches)) {
             $index = intval($matches[1]);
             $name = $matches[2];
-            $this->UpdateEnumerationOption('Voicing', $index, $name);
+            IPS_SetVariableProfileAssociation('LYNGDORF.Voicing', $index, $name, '', -1);
             $this->SetValue('Voicing', $index);
         }
         elseif (preg_match('/^RPVOI\((\d+)\)$/', $command, $matches)) {
             $this->SetValue('Voicing', intval($matches[1]));
         }
+        // AUDTYPE(Name)
         elseif (preg_match('/^AUDTYPE\((.*)\)$/', $command, $matches)) {
             $this->SetValue('AudioTypeIn', $matches[1]);
         }
+        // AUDTYPEOUT(Name) - Falls unterstützt
         elseif (preg_match('/^AUDTYPEOUT\((.*)\)$/', $command, $matches)) {
             $this->SetValue('AudioTypeOut', $matches[1]);
         }
     }
 
-    private function SendCommand(string $command): void
+    private function SendCommand($command)
     {
         if (!$this->HasActiveParent()) {
             return;
         }
         $this->SendDebug('Transmit', $command, 0);
-        
         $this->SendDataToParent(json_encode([
             'DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}',
-            'Buffer' => $command . "\r"
+            'Buffer' => utf8_encode($command . "\r")
         ]));
     }
 
-    private function UpdateVisibility(bool $powerState): void
+    private function UpdateVisibility($powerState)
     {
         if (!$this->ReadPropertyBoolean('HideVariablesWhenOff')) {
+            // Alle sichtbar machen
             $this->SetHidden('Volume', false);
             $this->SetHidden('Mute', false);
             $this->SetHidden('Source', false);
@@ -257,57 +253,11 @@ class LyngdorfMP60 extends IPSModuleStrict
         $this->SetHidden('AudioTypeOut', $hidden);
     }
 
-    private function SetHidden(string $ident, bool $hidden): void
+    private function SetHidden($ident, $hidden)
     {
         $id = @$this->GetIDForIdent($ident);
         if ($id !== false) {
             IPS_SetHidden($id, $hidden);
         }
-    }
-
-    private function InitializeEnumeration(string $ident, string $icon): void
-    {
-        $id = $this->GetIDForIdent($ident);
-        $pres = IPS_GetVariableCustomPresentation($id);
-        if (!is_array($pres) || empty($pres) || !isset($pres['PRESENTATION'])) {
-            IPS_SetVariableCustomPresentation($id, [
-                'PRESENTATION' => VARIABLE_PRESENTATION_ENUMERATION,
-                'ICON'         => $icon,
-                'Options'      => []
-            ]);
-        }
-    }
-
-    private function UpdateEnumerationOption(string $ident, int $value, string $label): void
-    {
-        if (!function_exists('IPS_GetVariableCustomPresentation')) return;
-        $id = $this->GetIDForIdent($ident);
-        $pres = IPS_GetVariableCustomPresentation($id);
-        if (!is_array($pres)) {
-            $pres = ['PRESENTATION' => VARIABLE_PRESENTATION_ENUMERATION, 'Options' => []];
-        }
-        if (!isset($pres['Options']) || !is_array($pres['Options'])) {
-            $pres['Options'] = [];
-        }
-
-        $found = false;
-        foreach ($pres['Options'] as &$option) {
-            if (isset($option['Value']) && $option['Value'] === $value) {
-                $option['Label'] = $label;
-                $found = true;
-                break;
-            }
-        }
-        if (!$found) {
-            $pres['Options'][] = [
-                'Value' => $value,
-                'Label' => $label
-            ];
-            // Options sortieren (optional, nach Value)
-            usort($pres['Options'], function($a, $b) {
-                return $a['Value'] <=> $b['Value'];
-            });
-        }
-        IPS_SetVariableCustomPresentation($id, $pres);
     }
 }
