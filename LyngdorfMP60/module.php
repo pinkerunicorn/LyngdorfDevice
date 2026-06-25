@@ -14,13 +14,13 @@ class LyngdorfMP60 extends IPSModuleStrict
         $this->SetBuffer('ReceiveBuffer', '');
 
         // Variablen registrieren
-        $this->RegisterVariableBoolean('Power', 'Power', '', 1);
+        $this->RegisterVariableBoolean('Power', 'Power', '~Switch', 1);
         $this->EnableAction('Power');
 
         $this->RegisterVariableFloat('Volume', 'Lautstärke', '', 2);
         $this->EnableAction('Volume');
 
-        $this->RegisterVariableBoolean('Mute', 'Mute', '', 3);
+        $this->RegisterVariableBoolean('Mute', 'Mute', '~Switch', 3);
         $this->EnableAction('Mute');
 
         $this->RegisterVariableInteger('Source', 'Quelle', '', 4);
@@ -41,15 +41,7 @@ class LyngdorfMP60 extends IPSModuleStrict
         parent::ApplyChanges();
 
         if (function_exists('IPS_SetVariableCustomPresentation')) {
-            IPS_SetVariableCustomPresentation($this->GetIDForIdent('Power'), [
-                'PRESENTATION'   => VARIABLE_PRESENTATION_SWITCH,
-                'ICON'           => 'Power'
-            ]);
 
-            IPS_SetVariableCustomPresentation($this->GetIDForIdent('Mute'), [
-                'PRESENTATION'   => VARIABLE_PRESENTATION_SWITCH,
-                'ICON'           => 'Speaker'
-            ]);
 
             IPS_SetVariableCustomPresentation($this->GetIDForIdent('Volume'), [
                 'PRESENTATION' => VARIABLE_PRESENTATION_SLIDER,
