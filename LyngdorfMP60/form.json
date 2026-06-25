@@ -6,6 +6,12 @@
             "caption": "Variablen verstecken, wenn das Gerät ausgeschaltet ist"
         }
     ],
-    "actions": [],
+    "actions": [
+        {
+            "type": "Button",
+            "label": "Werte manuell vom Receiver aktualisieren",
+            "onClick": "LYNG_UpdateData($id);"
+        }
+    ],
     "status": []
 }

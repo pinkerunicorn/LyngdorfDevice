@@ -138,6 +138,24 @@ class LyngdorfMP60 extends IPSModule
         }
     }
 
+    public function UpdateData()
+    {
+        if ($this->HasActiveParent()) {
+            $this->SendCommand('!VERB(1)');
+            $this->SendCommand('!POWER?');
+            $this->SendCommand('!VOL?');
+            $this->SendCommand('!MUTE?');
+            $this->SendCommand('!SRCS?');
+            $this->SendCommand('!AUDMODEL?');
+            $this->SendCommand('!RPVOIS?');
+            $this->SendCommand('!SRC?');
+            $this->SendCommand('!AUDMODE?');
+            $this->SendCommand('!RPVOI?');
+            $this->SendCommand('!AUDTYPE?');
+            $this->SendCommand('!AUDTYPEOUT?');
+        }
+    }
+
     private function ProcessPacket($packet)
     {
         if (strpos($packet, '!') !== 0 && strpos($packet, '#') !== 0) {
