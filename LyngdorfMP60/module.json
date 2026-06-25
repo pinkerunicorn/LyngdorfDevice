@@ -17,17 +17,35 @@
         {
             "name": "Source",
             "type": 1,
-            "icon": "TV"
+            "icon": "TV",
+            "prefix": "",
+            "suffix": "",
+            "minValue": 0,
+            "maxValue": 0,
+            "stepSize": 0,
+            "associations": []
         },
         {
             "name": "AudioMode",
             "type": 1,
-            "icon": "Sound"
+            "icon": "Sound",
+            "prefix": "",
+            "suffix": "",
+            "minValue": 0,
+            "maxValue": 0,
+            "stepSize": 0,
+            "associations": []
         },
         {
             "name": "Voicing",
             "type": 1,
-            "icon": "Speaker"
+            "icon": "Speaker",
+            "prefix": "",
+            "suffix": "",
+            "minValue": 0,
+            "maxValue": 0,
+            "stepSize": 0,
+            "associations": []
         }
     ]
 }
