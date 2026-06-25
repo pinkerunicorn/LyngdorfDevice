@@ -53,6 +53,19 @@ class LyngdorfMP60 extends IPSModuleStrict
             ]);
         }
 
+        if (!IPS_VariableProfileExists('LYNG.Source')) {
+            IPS_CreateVariableProfile('LYNG.Source', 1);
+            IPS_SetVariableProfileIcon('LYNG.Source', 'TV');
+        }
+        if (!IPS_VariableProfileExists('LYNG.AudioMode')) {
+            IPS_CreateVariableProfile('LYNG.AudioMode', 1);
+            IPS_SetVariableProfileIcon('LYNG.AudioMode', 'Sound');
+        }
+        if (!IPS_VariableProfileExists('LYNG.Voicing')) {
+            IPS_CreateVariableProfile('LYNG.Voicing', 1);
+            IPS_SetVariableProfileIcon('LYNG.Voicing', 'Speaker');
+        }
+
         if ($this->HasActiveParent()) {
             $this->SendCommand('!VERB(1)');
             $this->SendCommand('!POWER?');
