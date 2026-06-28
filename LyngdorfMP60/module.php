@@ -186,6 +186,14 @@ class LyngdorfMP60 extends IPSModuleStrict
             $this->SetValue('Power', $power);
             $this->UpdateVisibility($power);
         } 
+        elseif ($command === 'POWERONMAIN') {
+            $this->SetValue('Power', true);
+            $this->UpdateVisibility(true);
+        }
+        elseif ($command === 'POWEROFFMAIN') {
+            $this->SetValue('Power', false);
+            $this->UpdateVisibility(false);
+        }
         elseif (preg_match('/^VOL\((-?\d+)\)$/', $command, $matches)) {
             $this->SetValue('Volume', floatval($matches[1]) / 10);
         }
