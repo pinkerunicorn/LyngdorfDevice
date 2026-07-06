@@ -14,26 +14,26 @@ class LyngdorfMP60 extends IPSModuleStrict
         $this->SetBuffer('ReceiveBuffer', '');
 
         // Variablen registrieren
-        $this->RegisterVariableBoolean('Power', 'Power', '', 1);
+        $this->RegisterVariableBoolean('Power', '⚡ Power', '', 1);
         $this->EnableAction('Power');
 
-        $this->RegisterVariableFloat('Volume', 'Lautstärke', '', 2);
+        $this->RegisterVariableFloat('Volume', '🔊 Lautstärke', '', 2);
         $this->EnableAction('Volume');
 
-        $this->RegisterVariableBoolean('Mute', 'Mute', '', 3);
+        $this->RegisterVariableBoolean('Mute', '🔇 Mute', '', 3);
         $this->EnableAction('Mute');
 
-        $this->RegisterVariableInteger('Source', 'Quelle', 'LYNG.Source', 4);
+        $this->RegisterVariableInteger('Source', '🎵 Quelle', 'LYNG.Source', 4);
         $this->EnableAction('Source');
 
-        $this->RegisterVariableInteger('AudioMode', 'Audio Mode', 'LYNG.AudioMode', 5);
+        $this->RegisterVariableInteger('AudioMode', '🎛️ Audio Mode', 'LYNG.AudioMode', 5);
         $this->EnableAction('AudioMode');
 
-        $this->RegisterVariableInteger('Voicing', 'Voicing', 'LYNG.Voicing', 6);
+        $this->RegisterVariableInteger('Voicing', '🗣️ Voicing', 'LYNG.Voicing', 6);
         $this->EnableAction('Voicing');
 
-        $this->RegisterVariableString('AudioTypeIn', 'Audio Type In', '', 7);
-        $this->RegisterVariableString('AudioTypeOut', 'Audio Type Out', '', 8);
+        $this->RegisterVariableString('AudioTypeIn', '📥 Audio Type In', '', 7);
+        $this->RegisterVariableString('AudioTypeOut', '📤 Audio Type Out', '', 8);
     }
 
     public function ApplyChanges(): void
