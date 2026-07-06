@@ -76,18 +76,25 @@ class LyngdorfMP60 extends IPSModuleStrict
         }
 
         if ($this->HasActiveParent()) {
-            $this->SendCommand('!VERB(1)');
-            $this->SendCommand('!POWER?');
-            $this->SendCommand('!VOL?');
-            $this->SendCommand('!MUTE?');
-            $this->SendCommand('!SRCS?');
-            $this->SendCommand('!AUDMODEL?');
-            $this->SendCommand('!RPVOIS?');
-            $this->SendCommand('!SRC?');
-            $this->SendCommand('!AUDMODE?');
-            $this->SendCommand('!RPVOI?');
-            $this->SendCommand('!AUDTYPE?');
-            $this->SendCommand('!AUDTYPEOUT?');
+            $this->UpdateData();
+        }
+
+        $parentId = IPS_GetInstance($this->InstanceID)['ConnectionID'];
+        if ($parentId > 0) {
+            $this->RegisterMessage($parentId, 10505 /* IM_CHANGESTATUS */);
+        }
+
+        // Regelmäßiges Polling (alle 30 Sekunden) als Fallback
+        $this->RegisterTimer('UpdatePolling', 30000, 'LYNG_UpdateData($_IPS[\'TARGET\']);');
+    }
+
+    public function MessageSink(int $TimeStamp, int $SenderID, int $Message, array $Data): void
+    {
+        if ($Message === 10505) { // IM_CHANGESTATUS
+            if ($Data[0] === 102) { // IS_ACTIVE
+                $this->SendDebug('System', 'Socket reconnected, forcing UpdateData', 0);
+                $this->UpdateData();
+            }
         }
     }
 
@@ -186,11 +193,11 @@ class LyngdorfMP60 extends IPSModuleStrict
             $this->SetValue('Power', $power);
             $this->UpdateVisibility($power);
         } 
-        elseif ($command === 'POWERONMAIN') {
+        elseif ($command === 'POWERONMAIN' || $command === 'PON' || $command === 'POWERON') {
             $this->SetValue('Power', true);
             $this->UpdateVisibility(true);
         }
-        elseif ($command === 'POWEROFFMAIN') {
+        elseif ($command === 'POWEROFFMAIN' || $command === 'POFF' || $command === 'POWEROFF') {
             $this->SetValue('Power', false);
             $this->UpdateVisibility(false);
         }
