@@ -88,11 +88,17 @@ class LyngdorfMP60 extends IPSModuleStrict
         $this->RegisterTimer('UpdatePolling', 30000, 'LYNG_UpdateData($_IPS[\'TARGET\']);');
     }
 
+    protected function Log(string $text): void
+    {
+        IPS_LogMessage('SmartVillaKunterbunt', 'LyngdorfMP60: ' . $text);
+    }
+
     public function MessageSink(int $TimeStamp, int $SenderID, int $Message, array $Data): void
     {
         if ($Message === 10505) { // IM_CHANGESTATUS
             if ($Data[0] === 102) { // IS_ACTIVE
                 $this->SendDebug('System', 'Socket reconnected, forcing UpdateData', 0);
+                $this->Log('Verbindung zum Gerät (wieder-)hergestellt. Lade Status...');
                 $this->UpdateData();
             }
         }
@@ -103,8 +109,10 @@ class LyngdorfMP60 extends IPSModuleStrict
         switch ($Ident) {
             case 'Power':
                 if ($Value) {
+                    $this->Log('Schalte Gerät EIN (POWERONMAIN)');
                     $this->SendCommand('!POWERONMAIN');
                 } else {
+                    $this->Log('Schalte Gerät AUS (POWEROFFMAIN)');
                     $this->SendCommand('!POWEROFFMAIN');
                 }
                 break;
@@ -190,14 +198,23 @@ class LyngdorfMP60 extends IPSModuleStrict
 
         if (preg_match('/^POWER\((\d)\)$/', $command, $matches)) {
             $power = ($matches[1] == '1');
+            if ($this->GetValue('Power') !== $power) {
+                $this->Log('Status geändert: Power = ' . ($power ? 'ON' : 'OFF'));
+            }
             $this->SetValue('Power', $power);
             $this->UpdateVisibility($power);
         } 
         elseif ($command === 'POWERONMAIN' || $command === 'PON' || $command === 'POWERON') {
+            if (!$this->GetValue('Power')) {
+                $this->Log('Status geändert: Power = ON');
+            }
             $this->SetValue('Power', true);
             $this->UpdateVisibility(true);
         }
         elseif ($command === 'POWEROFFMAIN' || $command === 'POFF' || $command === 'POWEROFF') {
+            if ($this->GetValue('Power')) {
+                $this->Log('Status geändert: Power = OFF');
+            }
             $this->SetValue('Power', false);
             $this->UpdateVisibility(false);
         }
