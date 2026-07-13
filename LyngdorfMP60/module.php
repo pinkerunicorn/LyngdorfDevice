@@ -348,9 +348,14 @@ class LyngdorfMP60 extends IPSModuleStrict
 {
     "elements": [
         {
-            "type": "CheckBox",
-            "name": "HideVariablesWhenOff",
-            "caption": "Variablen verstecken, wenn das Gerät ausgeschaltet ist"
+            "type": "RowLayout",
+            "items": [
+                {
+                    "type": "CheckBox",
+                    "name": "HideVariablesWhenOff",
+                    "caption": "Variablen verstecken, wenn das Gerät ausgeschaltet ist"
+                }
+            ]
         }
     ],
     "actions": [
