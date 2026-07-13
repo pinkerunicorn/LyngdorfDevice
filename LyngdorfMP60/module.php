@@ -212,7 +212,7 @@ class LyngdorfMP60 extends IPSModuleStrict
             if ($this->GetValue('Power') !== $power) {
                 $this->Log('Status geändert: Power = ' . ($power ? 'ON' : 'OFF'));
             }
-            $this->SetValue('Power', $power);
+            $this->SetValue('Power', (bool)$power);
             $this->UpdateVisibility($power);
         } 
         elseif ($command === 'POWERONMAIN' || $command === 'PON' || $command === 'POWERON') {
