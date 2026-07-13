@@ -334,19 +334,11 @@ class LyngdorfMP60 extends IPSModuleStrict
         $map[$index] = $name;
         $this->WriteAttributeString($mapName, json_encode($map));
         
-        $associations = [];
-        foreach ($map as $val => $text) {
-            $associations[] = [
-                'Value' => $val,
-                'Name' => $text,
-                'Icon' => $icon,
-                'Color' => -1
-            ];
+        $profileName = 'Lyngdorf.' . $ident . '.' . $this->InstanceID;
+        if (!IPS_VariableProfileExists($profileName)) {
+            IPS_CreateVariableProfile($profileName, 1);
         }
-        
-        IPS_SetVariableCustomPresentation($this->GetIDForIdent($ident), [
-            'Presentation' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
-            'Associations' => $associations
-        ]);
+        IPS_SetVariableProfileAssociation($profileName, $index, $name, $icon, -1);
+        IPS_SetVariableCustomProfile($this->GetIDForIdent($ident), $profileName);
     }
 }
