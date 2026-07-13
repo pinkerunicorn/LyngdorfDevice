@@ -47,18 +47,18 @@ class LyngdorfMP60 extends IPSModuleStrict
 
         
         IPS_SetVariableCustomPresentation($this->GetIDForIdent('Power'), [
-            'Presentation' => VARIABLE_PRESENTATION_SWITCH,
+            'PRESENTATION' => VARIABLE_PRESENTATION_SWITCH,
             'ICON'         => 'Power'
         ]);
 
         IPS_SetVariableCustomPresentation($this->GetIDForIdent('Mute'), [
-            'Presentation' => VARIABLE_PRESENTATION_SWITCH,
+            'PRESENTATION' => VARIABLE_PRESENTATION_SWITCH,
             'ICON'         => 'Speaker'
         ]);
 
 
         IPS_SetVariableCustomPresentation($this->GetIDForIdent('Volume'), [
-            'Presentation' => VARIABLE_PRESENTATION_SLIDER,
+            'PRESENTATION' => VARIABLE_PRESENTATION_SLIDER,
             'ICON'         => 'Intensity',
             'SUFFIX'       => ' dB',
             'MIN'          => -99.9,
@@ -67,13 +67,13 @@ class LyngdorfMP60 extends IPSModuleStrict
         ]);
 
                 IPS_SetVariableCustomPresentation($this->GetIDForIdent('Source'), [
-            'Icon' => 'TV'
+            'ICON' => 'TV'
         ]);
         IPS_SetVariableCustomPresentation($this->GetIDForIdent('AudioMode'), [
-            'Icon' => 'Sound'
+            'ICON' => 'Sound'
         ]);
         IPS_SetVariableCustomPresentation($this->GetIDForIdent('Voicing'), [
-            'Icon' => 'Speaker'
+            'ICON' => 'Speaker'
         ]);
 
         if ($this->HasActiveParent()) {
@@ -172,13 +172,13 @@ class LyngdorfMP60 extends IPSModuleStrict
     public function UpdateData(): void
     {
                 IPS_SetVariableCustomPresentation($this->GetIDForIdent('Source'), [
-            'Icon' => 'TV'
+            'ICON' => 'TV'
         ]);
         IPS_SetVariableCustomPresentation($this->GetIDForIdent('AudioMode'), [
-            'Icon' => 'Sound'
+            'ICON' => 'Sound'
         ]);
         IPS_SetVariableCustomPresentation($this->GetIDForIdent('Voicing'), [
-            'Icon' => 'Speaker'
+            'ICON' => 'Speaker'
         ]);
 
         if ($this->HasActiveParent()) {
