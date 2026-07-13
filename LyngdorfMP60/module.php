@@ -327,12 +327,12 @@ class LyngdorfMP60 extends IPSModuleStrict
 
     private function UpdateDynamicProfile(string $ident, string $mapName, int $index, string $name, string $icon): void
     {
-        $map = json_decode($this->ReadPropertyString($mapName), true);
+        $map = json_decode($this->ReadAttributeString($mapName), true);
         if (!is_array($map)) {
             $map = [];
         }
         $map[$index] = $name;
-        $this->UpdateFormField($mapName, 'values', json_encode($map)); // Just in case it's used
+        $this->WriteAttributeString($mapName, json_encode($map));
         
         $associations = [];
         foreach ($map as $val => $text) {
