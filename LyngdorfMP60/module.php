@@ -341,4 +341,28 @@ class LyngdorfMP60 extends IPSModuleStrict
         IPS_SetVariableProfileAssociation($profileName, $index, $name, $icon, -1);
         IPS_SetVariableCustomProfile($this->GetIDForIdent($ident), $profileName);
     }
+
+    public function GetConfigurationForm(): string
+    {
+        return <<<'EOT'
+{
+    "elements": [
+        {
+            "type": "CheckBox",
+            "name": "HideVariablesWhenOff",
+            "caption": "Variablen verstecken, wenn das Gerät ausgeschaltet ist"
+        }
+    ],
+    "actions": [
+        {
+            "type": "Button",
+            "label": "Werte manuell vom Receiver aktualisieren",
+            "onClick": "LYNG_UpdateData($id);"
+        }
+    ],
+    "status": []
 }
+EOT;
+    }
+}
+
