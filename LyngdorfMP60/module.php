@@ -8,6 +8,11 @@ class LyngdorfMP60 extends IPSModuleStrict
     {
         parent::Create();
 
+        $this->RegisterAttributeString('SourceMap', '[]');
+        $this->RegisterAttributeString('AudioModeMap', '[]');
+        $this->RegisterAttributeString('VoicingMap', '[]');
+
+
         $this->RegisterPropertyBoolean('HideVariablesWhenOff', false);
 
         // Receive Buffer für unvollständige TCP Pakete
@@ -29,7 +34,7 @@ class LyngdorfMP60 extends IPSModuleStrict
         $this->RegisterVariableInteger('AudioMode', '🎛️ Audio Mode', 'LYNG.AudioMode', 5);
         $this->EnableAction('AudioMode');
 
-        $this->RegisterVariableInteger('Voicing', '🗣️ Voicing', 'LYNG.Voicing', 6);
+        $this->RegisterVariableInteger('Voicing', '🗣️ Voicing', '', 6);
         $this->EnableAction('Voicing');
 
         $this->RegisterVariableString('AudioTypeIn', '📥 Audio Type In', '', 7);
@@ -61,18 +66,15 @@ class LyngdorfMP60 extends IPSModuleStrict
             'STEP'         => 0.5
         ]);
 
-        if (!IPS_VariableProfileExists('LYNG.Source')) {
-            IPS_CreateVariableProfile('LYNG.Source', 1);
-            IPS_SetVariableProfileIcon('LYNG.Source', 'TV');
-        }
-        if (!IPS_VariableProfileExists('LYNG.AudioMode')) {
-            IPS_CreateVariableProfile('LYNG.AudioMode', 1);
-            IPS_SetVariableProfileIcon('LYNG.AudioMode', 'Sound');
-        }
-        if (!IPS_VariableProfileExists('LYNG.Voicing')) {
-            IPS_CreateVariableProfile('LYNG.Voicing', 1);
-            IPS_SetVariableProfileIcon('LYNG.Voicing', 'Speaker');
-        }
+                IPS_SetVariableCustomPresentation($this->GetIDForIdent('Source'), [
+            'ICON' => 'TV'
+        ]);
+        IPS_SetVariableCustomPresentation($this->GetIDForIdent('AudioMode'), [
+            'ICON' => 'Sound'
+        ]);
+        IPS_SetVariableCustomPresentation($this->GetIDForIdent('Voicing'), [
+            'ICON' => 'Speaker'
+        ]);
 
         if ($this->HasActiveParent()) {
             $this->UpdateData();
@@ -169,6 +171,16 @@ class LyngdorfMP60 extends IPSModuleStrict
 
     public function UpdateData(): void
     {
+                IPS_SetVariableCustomPresentation($this->GetIDForIdent('Source'), [
+            'ICON' => 'TV'
+        ]);
+        IPS_SetVariableCustomPresentation($this->GetIDForIdent('AudioMode'), [
+            'ICON' => 'Sound'
+        ]);
+        IPS_SetVariableCustomPresentation($this->GetIDForIdent('Voicing'), [
+            'ICON' => 'Speaker'
+        ]);
+
         if ($this->HasActiveParent()) {
             $this->SendCommand('!VERB(1)');
             $this->SendCommand('!POWER?');
@@ -229,7 +241,7 @@ class LyngdorfMP60 extends IPSModuleStrict
         elseif (preg_match('/^SRC\((\d+)\)"(.*)"$/', $command, $matches)) {
             $index = intval($matches[1]);
             $name = $matches[2];
-            IPS_SetVariableProfileAssociation('LYNG.Source', $index, $name, '', -1);
+            $this->UpdateDynamicProfile('Source', 'SourceMap', $index, $name, 'TV');
             $this->SetValue('Source', $index);
         }
         elseif (preg_match('/^SRC\((\d+)\)$/', $command, $matches)) {
@@ -238,7 +250,7 @@ class LyngdorfMP60 extends IPSModuleStrict
         elseif (preg_match('/^AUDMODE\((\d+)\)"(.*)"$/', $command, $matches)) {
             $index = intval($matches[1]);
             $name = $matches[2];
-            IPS_SetVariableProfileAssociation('LYNG.AudioMode', $index, $name, '', -1);
+            $this->UpdateDynamicProfile('AudioMode', 'AudioModeMap', $index, $name, 'Sound');
             $this->SetValue('AudioMode', $index);
         }
         elseif (preg_match('/^AUDMODE\((\d+)\)$/', $command, $matches)) {
@@ -247,7 +259,7 @@ class LyngdorfMP60 extends IPSModuleStrict
         elseif (preg_match('/^RPVOI\((\d+)\)"(.*)"$/', $command, $matches)) {
             $index = intval($matches[1]);
             $name = $matches[2];
-            IPS_SetVariableProfileAssociation('LYNG.Voicing', $index, $name, '', -1);
+            $this->UpdateDynamicProfile('Voicing', 'VoicingMap', $index, $name, 'Speaker');
             $this->SetValue('Voicing', $index);
         }
         elseif (preg_match('/^RPVOI\((\d+)\)$/', $command, $matches)) {
