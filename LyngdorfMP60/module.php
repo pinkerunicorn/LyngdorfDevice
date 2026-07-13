@@ -306,4 +306,10 @@ class LyngdorfMP60 extends IPSModuleStrict
     }
 
 
+
+    protected function LogMessage($Message, $KL_MESSAGE = KL_MESSAGE)
+    {
+        IPS_LogMessage('SmartVillaKunterbunt', 'LyngdorfMP60: ' . $Message);
+    }
 }
+
