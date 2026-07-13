@@ -324,29 +324,5 @@ class LyngdorfMP60 extends IPSModuleStrict
         IPS_LogMessage('SmartVillaKunterbunt', 'LyngdorfMP60: ' . $Message);
         return true;
     }
-
-    private function UpdateDynamicProfile(string $ident, string $mapName, int $index, string $name, string $icon): void
-    {
-        $map = json_decode($this->ReadPropertyString($mapName), true);
-        if (!is_array($map)) {
-            $map = [];
-        }
-        $map[$index] = $name;
-        $this->UpdateFormField($mapName, 'values', json_encode($map)); // Just in case it's used
-        
-        $associations = [];
-        foreach ($map as $val => $text) {
-            $associations[] = [
-                'VALUE' => $val,
-                'NAME' => $text,
-                'ICON' => $icon,
-                'COLOR' => -1
-            ];
-        }
-        
-        IPS_SetVariableCustomPresentation($this->GetIDForIdent($ident), json_encode([
-            'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
-            'ASSOCIATIONS' => $associations
-        ]));
-    }
 }
+
