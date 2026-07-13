@@ -40,27 +40,26 @@ class LyngdorfMP60 extends IPSModuleStrict
     {
         parent::ApplyChanges();
 
-        if (function_exists('IPS_SetVariableCustomPresentation')) {
-            IPS_SetVariableCustomPresentation($this->GetIDForIdent('Power'), [
-                'PRESENTATION' => VARIABLE_PRESENTATION_SWITCH,
-                'ICON'         => 'Power'
-            ]);
+        
+        IPS_SetVariableCustomPresentation($this->GetIDForIdent('Power'), [
+            'PRESENTATION' => VARIABLE_PRESENTATION_SWITCH,
+            'ICON'         => 'Power'
+        ]);
 
-            IPS_SetVariableCustomPresentation($this->GetIDForIdent('Mute'), [
-                'PRESENTATION' => VARIABLE_PRESENTATION_SWITCH,
-                'ICON'         => 'Speaker'
-            ]);
+        IPS_SetVariableCustomPresentation($this->GetIDForIdent('Mute'), [
+            'PRESENTATION' => VARIABLE_PRESENTATION_SWITCH,
+            'ICON'         => 'Speaker'
+        ]);
 
 
-            IPS_SetVariableCustomPresentation($this->GetIDForIdent('Volume'), [
-                'PRESENTATION' => VARIABLE_PRESENTATION_SLIDER,
-                'ICON'         => 'Intensity',
-                'SUFFIX'       => ' dB',
-                'MIN'          => -99.9,
-                'MAX'          => 24.0,
-                'STEP'         => 0.5
-            ]);
-        }
+        IPS_SetVariableCustomPresentation($this->GetIDForIdent('Volume'), [
+            'PRESENTATION' => VARIABLE_PRESENTATION_SLIDER,
+            'ICON'         => 'Intensity',
+            'SUFFIX'       => ' dB',
+            'MIN'          => -99.9,
+            'MAX'          => 24.0,
+            'STEP'         => 0.5
+        ]);
 
         if (!IPS_VariableProfileExists('LYNG.Source')) {
             IPS_CreateVariableProfile('LYNG.Source', 1);
