@@ -67,12 +67,15 @@ class LyngdorfMP60 extends IPSModuleStrict
         ]);
 
                 IPS_SetVariableCustomPresentation($this->GetIDForIdent('Source'), [
+                'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
             'ICON' => 'TV'
         ]);
         IPS_SetVariableCustomPresentation($this->GetIDForIdent('AudioMode'), [
+                'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
             'ICON' => 'Sound'
         ]);
         IPS_SetVariableCustomPresentation($this->GetIDForIdent('Voicing'), [
+                'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
             'ICON' => 'Speaker'
         ]);
 
@@ -172,12 +175,15 @@ class LyngdorfMP60 extends IPSModuleStrict
     public function UpdateData(): void
     {
                 IPS_SetVariableCustomPresentation($this->GetIDForIdent('Source'), [
+                'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
             'ICON' => 'TV'
         ]);
         IPS_SetVariableCustomPresentation($this->GetIDForIdent('AudioMode'), [
+                'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
             'ICON' => 'Sound'
         ]);
         IPS_SetVariableCustomPresentation($this->GetIDForIdent('Voicing'), [
+                'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
             'ICON' => 'Speaker'
         ]);
 
