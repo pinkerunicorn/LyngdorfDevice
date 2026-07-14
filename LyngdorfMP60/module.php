@@ -31,10 +31,10 @@ class LyngdorfMP60 extends IPSModuleStrict
         $this->RegisterVariableInteger('Source', '🎵 Quelle', 'LYNG.Source', 4);
         $this->EnableAction('Source');
 
-        $this->RegisterVariableInteger('AudioMode', '🎛️ Audio Mode', 'LYNG.AudioMode', 5);
+        $this->RegisterVariableInteger('AudioMode', '🎛 Audio Mode', 'LYNG.AudioMode', 5);
         $this->EnableAction('AudioMode');
 
-        $this->RegisterVariableInteger('Voicing', '🗣️ Voicing', '', 6);
+        $this->RegisterVariableInteger('Voicing', '🗣 Voicing', '', 6);
         $this->EnableAction('Voicing');
 
         $this->RegisterVariableString('AudioTypeIn', '📥 Audio Type In', '', 7);
@@ -47,36 +47,36 @@ class LyngdorfMP60 extends IPSModuleStrict
 
         
         IPS_SetVariableCustomPresentation($this->GetIDForIdent('Power'), [
-            'PRESENTATION' => VARIABLE_PRESENTATION_SWITCH,
-            'ICON'         => 'Power'
+            'PRESENTATION'=> VARIABLE_PRESENTATION_SWITCH,
+            'ICON'        => 'Power'
         ]);
 
         IPS_SetVariableCustomPresentation($this->GetIDForIdent('Mute'), [
-            'PRESENTATION' => VARIABLE_PRESENTATION_SWITCH,
-            'ICON'         => 'Speaker'
+            'PRESENTATION'=> VARIABLE_PRESENTATION_SWITCH,
+            'ICON'        => 'Speaker'
         ]);
 
 
         IPS_SetVariableCustomPresentation($this->GetIDForIdent('Volume'), [
-            'PRESENTATION' => VARIABLE_PRESENTATION_SLIDER,
-            'ICON'         => 'Intensity',
-            'SUFFIX'       => ' dB',
-            'MIN'          => -99.9,
-            'MAX'          => 24.0,
-            'STEP'         => 0.5
+            'PRESENTATION'=> VARIABLE_PRESENTATION_SLIDER,
+            'ICON'        => 'Intensity',
+            'SUFFIX'      => 'dB',
+            'MIN'         => -99.9,
+            'MAX'         => 24.0,
+            'STEP'        => 0.5
         ]);
 
                 IPS_SetVariableCustomPresentation($this->GetIDForIdent('Source'), [
-                'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
-            'ICON' => 'TV'
+                'PRESENTATION'=> VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+            'ICON'=> 'TV'
         ]);
         IPS_SetVariableCustomPresentation($this->GetIDForIdent('AudioMode'), [
-                'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
-            'ICON' => 'Sound'
+                'PRESENTATION'=> VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+            'ICON'=> 'Sound'
         ]);
         IPS_SetVariableCustomPresentation($this->GetIDForIdent('Voicing'), [
-                'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
-            'ICON' => 'Speaker'
+                'PRESENTATION'=> VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+            'ICON'=> 'Speaker'
         ]);
 
         if ($this->HasActiveParent()) {
@@ -94,7 +94,7 @@ class LyngdorfMP60 extends IPSModuleStrict
 
     protected function Log(string $text): void
     {
-        IPS_LogMessage('SmartVillaKunterbunt', 'LyngdorfMP60: ' . $text);
+        IPS_LogMessage('SmartVillaKunterbunt', 'LyngdorfMP60: '. $text);
     }
 
     public function MessageSink(int $TimeStamp, int $SenderID, int $Message, array $Data): void
@@ -123,7 +123,7 @@ class LyngdorfMP60 extends IPSModuleStrict
 
             case 'Volume':
                 $volInt = (int)round($Value * 10);
-                $this->SendCommand('!VOL(' . $volInt . ')');
+                $this->SendCommand('!VOL('. $volInt . ')');
                 break;
 
             case 'Mute':
@@ -135,15 +135,15 @@ class LyngdorfMP60 extends IPSModuleStrict
                 break;
 
             case 'Source':
-                $this->SendCommand('!SRC(' . $Value . ')');
+                $this->SendCommand('!SRC('. $Value . ')');
                 break;
 
             case 'AudioMode':
-                $this->SendCommand('!AUDMODE(' . $Value . ')');
+                $this->SendCommand('!AUDMODE('. $Value . ')');
                 break;
 
             case 'Voicing':
-                $this->SendCommand('!RPVOI(' . $Value . ')');
+                $this->SendCommand('!RPVOI('. $Value . ')');
                 break;
         }
     }
@@ -175,16 +175,16 @@ class LyngdorfMP60 extends IPSModuleStrict
     public function UpdateData(): void
     {
                 IPS_SetVariableCustomPresentation($this->GetIDForIdent('Source'), [
-                'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
-            'ICON' => 'TV'
+                'PRESENTATION'=> VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+            'ICON'=> 'TV'
         ]);
         IPS_SetVariableCustomPresentation($this->GetIDForIdent('AudioMode'), [
-                'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
-            'ICON' => 'Sound'
+                'PRESENTATION'=> VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+            'ICON'=> 'Sound'
         ]);
         IPS_SetVariableCustomPresentation($this->GetIDForIdent('Voicing'), [
-                'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
-            'ICON' => 'Speaker'
+                'PRESENTATION'=> VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+            'ICON'=> 'Speaker'
         ]);
 
         if ($this->HasActiveParent()) {
@@ -216,19 +216,19 @@ class LyngdorfMP60 extends IPSModuleStrict
         if (preg_match('/^POWER\((\d)\)$/', $command, $matches)) {
             $power = ($matches[1] == '1');
             if ($this->GetValue('Power') !== $power) {
-                $this->Log('Status geändert: Power = ' . ($power ? 'ON' : 'OFF'));
+                $this->Log('Status geändert: Power = '. ($power ? 'ON': 'OFF'));
             }
             $this->SetValue('Power', (bool)$power);
             $this->UpdateVisibility($power);
         } 
-        elseif ($command === 'POWERONMAIN' || $command === 'PON' || $command === 'POWERON') {
+        elseif ($command === 'POWERONMAIN'|| $command === 'PON'|| $command === 'POWERON') {
             if (!$this->GetValue('Power')) {
                 $this->Log('Status geändert: Power = ON');
             }
             $this->SetValue('Power', true);
             $this->UpdateVisibility(true);
         }
-        elseif ($command === 'POWEROFFMAIN' || $command === 'POFF' || $command === 'POWEROFF') {
+        elseif ($command === 'POWEROFFMAIN'|| $command === 'POFF'|| $command === 'POWEROFF') {
             if ($this->GetValue('Power')) {
                 $this->Log('Status geändert: Power = OFF');
             }
@@ -287,8 +287,8 @@ class LyngdorfMP60 extends IPSModuleStrict
         $this->SendDebug('Transmit', $command, 0);
         
         $this->SendDataToParent(json_encode([
-            'DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}',
-            'Buffer' => bin2hex($command . "\r")
+            'DataID'=> '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}',
+            'Buffer'=> bin2hex($command . "\r")
         ]));
     }
 
@@ -327,7 +327,7 @@ class LyngdorfMP60 extends IPSModuleStrict
 
     protected function LogMessage(string $Message, int $Type): bool
     {
-        IPS_LogMessage('SmartVillaKunterbunt', 'LyngdorfMP60: ' . $Message);
+        IPS_LogMessage('SmartVillaKunterbunt', 'LyngdorfMP60: '. $Message);
         return true;
     }
 
@@ -340,7 +340,7 @@ class LyngdorfMP60 extends IPSModuleStrict
         $map[$index] = $name;
         $this->WriteAttributeString($mapName, json_encode($map));
         
-        $profileName = 'Lyngdorf.' . $ident . '.' . $this->InstanceID;
+        $profileName = 'Lyngdorf.'. $ident . '.'. $this->InstanceID;
         if (!IPS_VariableProfileExists($profileName)) {
             IPS_CreateVariableProfile($profileName, 1);
         }
