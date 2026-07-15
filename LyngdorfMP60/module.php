@@ -20,25 +20,33 @@ class LyngdorfMP60 extends IPSModuleStrict
 
         // Variablen registrieren
         $this->RegisterVariableBoolean('Power', '⚡ Power', '', 1);
+        IPS_SetIcon($this->GetIDForIdent('Power'), 'Power');
         $this->EnableAction('Power');
 
         $this->RegisterVariableFloat('Volume', '🔊 Lautstärke', '', 2);
+        IPS_SetIcon($this->GetIDForIdent('Volume'), 'Intensity');
         $this->EnableAction('Volume');
 
         $this->RegisterVariableBoolean('Mute', '🔇 Mute', '', 3);
+        IPS_SetIcon($this->GetIDForIdent('Mute'), 'Speaker');
         $this->EnableAction('Mute');
 
         $this->RegisterVariableInteger('Source', '🎵 Quelle', 'LYNG.Source', 4);
+        IPS_SetIcon($this->GetIDForIdent('Source'), 'TV');
         $this->EnableAction('Source');
 
         $this->RegisterVariableInteger('AudioMode', '🎛 Audio Mode', 'LYNG.AudioMode', 5);
+        IPS_SetIcon($this->GetIDForIdent('AudioMode'), 'Sound');
         $this->EnableAction('AudioMode');
 
         $this->RegisterVariableInteger('Voicing', '🗣 Voicing', '', 6);
+        IPS_SetIcon($this->GetIDForIdent('Voicing'), 'Speaker');
         $this->EnableAction('Voicing');
 
         $this->RegisterVariableString('AudioTypeIn', '📥 Audio Type In', '', 7);
+        IPS_SetIcon($this->GetIDForIdent('AudioTypeIn'), 'Information');
         $this->RegisterVariableString('AudioTypeOut', '📤 Audio Type Out', '', 8);
+        IPS_SetIcon($this->GetIDForIdent('AudioTypeOut'), 'Information');
     }
 
     public function ApplyChanges(): void
