@@ -362,6 +362,10 @@ class LyngdorfMP60 extends IPSModuleStrict
 {
     "elements": [
         {
+            "type": "Label",
+            "caption": "Hier stellst du ein, ob die Variablen im WebFront versteckt werden sollen, wenn der Receiver ausgeschaltet ist. Das sorgt für mehr Übersichtlichkeit!"
+        },
+        {
             "type": "RowLayout",
             "items": [
                 {
@@ -373,6 +377,10 @@ class LyngdorfMP60 extends IPSModuleStrict
         }
     ],
     "actions": [
+        {
+            "type": "Label",
+            "caption": "Hier kannst du die aktuellen Werte manuell vom Receiver abfragen, falls mal etwas asynchron sein sollte."
+        },
         {
             "type": "Button",
             "label": "Werte manuell vom Receiver aktualisieren",
