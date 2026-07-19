@@ -53,7 +53,11 @@ class LyngdorfMP60 extends IPSModuleStrict
     {
         parent::ApplyChanges();
 
-        
+        // Self-Healing: Reset all corrupted presentations before re-applying
+        foreach (['Power','Volume','Mute','Source','AudioMode','Voicing','AudioTypeIn','AudioTypeOut'] as $_ident) {
+            IPS_SetVariableCustomPresentation($this->GetIDForIdent($_ident), []);
+        }
+
         IPS_SetVariableCustomPresentation($this->GetIDForIdent('Power'), [
             'PRESENTATION'=> VARIABLE_PRESENTATION_SWITCH,
             'ICON'        => 'Power'
@@ -303,30 +307,30 @@ class LyngdorfMP60 extends IPSModuleStrict
     private function UpdateVisibility(bool $powerState): void
     {
         if (!$this->ReadPropertyBoolean('HideVariablesWhenOff')) {
-            $this->SetHidden('Volume', false);
-            $this->SetHidden('Mute', false);
-            $this->SetHidden('Source', false);
-            $this->SetHidden('AudioMode', false);
-            $this->SetHidden('Voicing', false);
-            $this->SetHidden('AudioTypeIn', false);
-            $this->SetHidden('AudioTypeOut', false);
+            $this->SetHiddenSafe('Volume', false);
+            $this->SetHiddenSafe('Mute', false);
+            $this->SetHiddenSafe('Source', false);
+            $this->SetHiddenSafe('AudioMode', false);
+            $this->SetHiddenSafe('Voicing', false);
+            $this->SetHiddenSafe('AudioTypeIn', false);
+            $this->SetHiddenSafe('AudioTypeOut', false);
             return;
         }
 
         $hidden = !$powerState;
-        $this->SetHidden('Volume', $hidden);
-        $this->SetHidden('Mute', $hidden);
-        $this->SetHidden('Source', $hidden);
-        $this->SetHidden('AudioMode', $hidden);
-        $this->SetHidden('Voicing', $hidden);
-        $this->SetHidden('AudioTypeIn', $hidden);
-        $this->SetHidden('AudioTypeOut', $hidden);
+        $this->SetHiddenSafe('Volume', $hidden);
+        $this->SetHiddenSafe('Mute', $hidden);
+        $this->SetHiddenSafe('Source', $hidden);
+        $this->SetHiddenSafe('AudioMode', $hidden);
+        $this->SetHiddenSafe('Voicing', $hidden);
+        $this->SetHiddenSafe('AudioTypeIn', $hidden);
+        $this->SetHiddenSafe('AudioTypeOut', $hidden);
     }
 
-    private function SetHidden(string $ident, bool $hidden): void
+    private function SetHiddenSafe(string $ident, bool $hidden): void
     {
         $id = @$this->GetIDForIdent($ident);
-        if ($id !== false) {
+        if ($id !== false && $id > 0) {
             IPS_SetHidden($id, $hidden);
         }
     }
