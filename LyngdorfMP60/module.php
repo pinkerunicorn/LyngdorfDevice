@@ -163,6 +163,10 @@ class LyngdorfMP60 extends IPSModuleStrict
     public function ReceiveData(string $JSONString): string
     {
         $data = json_decode($JSONString);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $this->SLog('ERROR', 'Ungültiges JSON empfangen', json_last_error_msg());
+            return '';
+        }
         if (isset($data->Buffer)) {
             $payload = is_string($data->Buffer) ? hex2bin($data->Buffer) : '';
         } else {
@@ -358,6 +362,10 @@ class LyngdorfMP60 extends IPSModuleStrict
     private function UpdateDynamicProfile(string $ident, string $mapName, int $index, string $name, string $icon): void
     {
         $map = json_decode($this->ReadAttributeString($mapName), true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $this->SLog('ERROR', 'Ungültiges JSON empfangen', json_last_error_msg());
+            return;
+        }
         if (!is_array($map)) {
             $map = [];
         }
